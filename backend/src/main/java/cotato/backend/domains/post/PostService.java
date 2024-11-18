@@ -59,4 +59,11 @@ public class PostService {
 
 		return FindPostResponse.createdFrom(post);
 	}
+
+	public void deletePostById(Long id){
+		Post post = postRepository.findById(id)
+			.orElseThrow(() -> { return new NoSuchElementException("게시글이 존재하지 않습니다."); });
+
+		postRepository.delete(post);
+	}
 }

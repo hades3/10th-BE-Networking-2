@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PostService {
 
 	private final PostRepository postRepository;
+	private final PostBulkRepository postBulkRepository;
 
 	@Transactional
 	public void savePost(SavePostRequest request){
@@ -39,7 +40,7 @@ public class PostService {
 				.map(Post::createdFrom)
 				.toList();
 
-			postRepository.saveAll(posts);
+			postBulkRepository.saveAllByExcel(posts);
 
 		} catch (Exception e) {
 			log.error("Failed to save estates by excel", e);

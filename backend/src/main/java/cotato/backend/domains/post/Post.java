@@ -1,5 +1,7 @@
 package cotato.backend.domains.post;
 
+import java.util.Map;
+
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,6 +44,10 @@ public class Post {
 
 	public static Post createdFrom(SavePostRequest request) {
 		return new Post(request.getTitle(), request.getContent(), request.getName());
+	}
+
+	public static Post createdFrom(Map<String, String> row) {
+		return new Post(row.get("title"), row.get("content"), row.get("name"));
 	}
 
 	public void increaseViews() {

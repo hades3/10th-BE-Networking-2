@@ -36,14 +36,10 @@ public class PostService {
 		try {
 			// 엑셀 파일을 읽어 데이터 프레임 형태로 변환
 			List<Post> posts = ExcelUtils.parseExcelFile(filePath).stream()
-				.map(row -> {
-					String title = row.get("title");
-					String content = row.get("content");
-					String name = row.get("name");
+				.map(Post::createdFrom)
+				.toList();
 
-					return new Post(title, content, name);
-				})
-				.collect(Collectors.toList());
+			postRepository.saveAll(posts);
 
 		} catch (Exception e) {
 			log.error("Failed to save estates by excel", e);

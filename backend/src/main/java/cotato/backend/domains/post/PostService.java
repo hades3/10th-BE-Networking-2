@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,10 +56,9 @@ public class PostService {
 	@Transactional
 	public FindPostResponse findPostById(Long id) {
 		Post post = postRepository.findById(id)
-			.orElseThrow(() -> { return new NoSuchElementException("게시글이 존재하지 않습니다."); });
+			.orElseThrow(() -> new NoSuchElementException("게시글이 존재하지 않습니다."));
 
-		post.increaseViews();
-
+		postRepository.increaseViews(id);
 		return FindPostResponse.createdFrom(post);
 	}
 

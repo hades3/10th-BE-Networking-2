@@ -4,12 +4,11 @@ import static cotato.backend.common.exception.ErrorCode.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
-import org.hibernate.dialect.lock.OptimisticEntityLockException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +52,7 @@ public class PostService {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public FindPostResponse findPostById(Long id) {
 		Post post = postRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("게시글이 존재하지 않습니다."));
@@ -63,12 +62,14 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable(value = "Posts", key = "#pageable.pageNumber", cacheManager = "redisCacheManager")
 	public FindPostListResponse findPostsWithPaging(Pageable pageable) {
 		Page<Post> posts = postRepository.findAll(pageable);
 		return FindPostListResponse.createdFrom(posts);
 	}
 
 	@Transactional
+	@CacheEvict(value = "Posts", allEntries = true, cacheManager = "redisCacheManager")
 	public void deletePostById(Long id){
 		Post post = postRepository.findById(id)
 			.orElseThrow(() -> { return new NoSuchElementException("게시글이 존재하지 않습니다."); });

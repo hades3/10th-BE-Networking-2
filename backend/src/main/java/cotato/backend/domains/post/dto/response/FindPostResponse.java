@@ -2,8 +2,10 @@ package cotato.backend.domains.post.dto.response;
 
 import cotato.backend.domains.post.Post;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class FindPostResponse {
 
 	private String title;
